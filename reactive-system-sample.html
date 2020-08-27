@@ -41,7 +41,7 @@
     }
 
     // Data initializer
-    function reactive(data) {
+    function observe(data) {
       Object.keys(data).forEach((key) => {
         let internalValue = data[key]
         const dep = new Dep()
@@ -64,7 +64,7 @@
     const vm = { price: 5, quantity: 2, total: 0 }
 
     // App reactive setup
-    reactive(vm)
+    observe(vm)
 
     // App watcher setup
     watcher(() => {
