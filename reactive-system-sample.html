@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+<head>
+  <title>Branco JS</title>
+</head>
+<body>
+  <label for="unit-price">Unit price: R$</label>
+  <input placeholder="Unit price" id="unit-price" />
+  <br><br>
+
+  <label for="quantity">Quantity:</label>
+  <input placeholder="Quantity" id="quantity" />
+  <br><br>
+
+  <div>Total Value: <span id="total"></span></div>
+  <script>
+    // Dependency manager
+    let target = null
+
+    class Dep {
+      constructor() {
+        this.subscribers = []
+      }
+
+      depend() {
+        if(target && !this.subscribers.includes(target)) {
+          this.subscribers.push(target)
+        }
+      }
+
+      notify() {
+        this.subscribers.forEach(sub => sub())
+      }
+    }
+
+    // Watcher setuper
+    function watcher(myFunc) {
+      target = myFunc
+      target()
+      target = null
+    }
+
+    // Data initializer
+    function reactive(data) {
+      Object.keys(data).forEach((key) => {
+        let internalValue = data[key]
+        const dep = new Dep()
+        Object.defineProperty(data, key, {
+          get() {
+            dep.depend() // Subscribe to newsletters
+            console.log(`Getting ${key}: ${internalValue}`)
+            return internalValue
+          },
+          set(newValue) {
+            console.log(`Setting ${key}: ${newValue}`)
+            internalValue = newValue
+            dep.notify() // Trigger a newsletter
+          }
+        })
+      })
+    }
+
+    // App data
+    const vm = { price: 5, quantity: 2, total: 0 }
+
+    // App reactive setup
+    reactive(vm)
+
+    // App watcher setup
+    watcher(() => {
+      const total = vm.price * vm.quantity 
+      document.getElementById('total').innerHTML = total
+      vm.total = total
+    })
+
+    // Setup unit price input
+    function onInputUnitPrice(event) {
+      vm.price = event.target.value
+    }
+
+    const unitPriceInput = document.getElementById('unit-price')
+    unitPriceInput.addEventListener('input', onInputUnitPrice)
+    unitPriceInput.value = vm.price
+
+
+    // Setup quantity input
+    function onInputQuantity(event) {
+      vm.quantity = event.target.value
+    }
+
+    const quantityInput = document.getElementById('quantity')
+    quantityInput.addEventListener('input', onInputQuantity)
+    quantityInput.value = vm.quantity
+  </script>
+</body>
+</html>
